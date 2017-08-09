@@ -6,8 +6,9 @@
 using CppAD::AD;
 
 // TODO: Set the timestep length and duration
-size_t N = 0;
-double dt = 0;
+// TODO: Tune coefficients
+const size_t N = 10;
+const double dt = 0.3;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -33,6 +34,18 @@ class FG_eval {
     // `fg` a vector of the cost constraints, `vars` is a vector of variable values (state & actuators)
     // NOTE: You'll probably go back and forth between this function and
     // the Solver function below.
+    
+    // model equations
+    // x_[t+1] = x[t] + v[t] * cos(psi[t]) * dt
+    // y_[t+1] = y[t] + v[t] * sin(psi[t]) * dt
+    // psi_[t+1] = psi[t] + v[t] / Lf * delta[t] * dt
+    // v_[t+1] = v[t] + a[t] * dt
+    // cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt
+    // epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt
+    //
+    // constraints
+    // delta [-25deg, 25deg]
+    // a [-1, 1]
   }
 };
 
