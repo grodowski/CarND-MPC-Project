@@ -1,6 +1,65 @@
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
+## Writeup and remarks
+
+The purpose of this project was to create a Model Predictive Controller driving a car around a track in Udacity Simulator. 
+
+MPC is a controller that generates actuator values accounting for future predicted errors in a predefined horizon `N` and timestep `dt`. 
+
+#### State
+
+The model state consists of six variables:
+x, y - position
+psi - yaw angle
+v - velocity
+cte - cross track error
+epsi - yaw error
+
+#### Actuators
+
+The actuators computed by the model and fed to the simulator are steering angle and throttle value, denoted by `delta` and `a`.
+
+#### Update equations
+
+Each update invoves a state prediction that is optimized by ipopt to choose best actuator output to minimise the objective.
+
+```
+x_[t+1] = x[t] + v[t] * cos(psi[t]) * dt
+y_[t+1] = y[t] + v[t] * sin(psi[t]) * dt
+psi_[t+1] = psi[t] + v[t] / Lf * delta[t] * dt
+v_[t+1] = v[t] + a[t] * dt
+cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt
+epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt
+```
+
+#### Optimization objective
+
+I have used a standard error function from the MPC Quiz, which allowed the car to drive at 60mph after tweaking `N` and `dt`.
+
+This function takes into account:
+
+- cross-track error 
+- psi error
+- difference between current velocity and a target velocity (60mph)
+- `a` and `delta` to penalize high actuator outputs
+- gaps between sequential actuations to provide a smoother output (a0 - a1, delta0 - delta1).
+
+## N and dt
+
+I started with a prediction horizon of `N = 10` as suggested in the lectures. Initial `dt` was chosen to `0.2`, which worked great until I introduced latency into the pipeline. The timestep being higher than the latency led to unpredictable behaviors of the car, especially on sharp curves. Decresing `dt` to `0.08` helped me achieve a smooth and stable trajectory.
+
+
+## Dealing with latency
+
+A part of the project was to incorporate 100ms latency between telemetry updates and actuator inputs. This passing a prediction of the state to the mpc solver, rather than raw state provided by the simulator. The prediction involved an update of the `x`, `y` position of the vehicle and it's orientation `psi` using equations from the kinematic model described above. 
+
+```
+px = px + v * cos(psi) * 0.1;
+py = py + v * sin(psi) * 0.1;
+psi = psi - v * (delta / 2.67) * 0.1;
+```
+
 ---
 
 ## Dependencies
