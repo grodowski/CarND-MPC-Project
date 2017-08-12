@@ -1,6 +1,8 @@
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
+![screenshot](screen.png)
+
 ## Writeup and remarks
 
 The purpose of this project was to create a Model Predictive Controller driving a car around a track in Udacity Simulator. 
@@ -10,11 +12,14 @@ MPC is a controller that generates actuator values accounting for future predict
 #### State
 
 The model state consists of six variables:
+
+```
 x, y - position
 psi - yaw angle
 v - velocity
 cte - cross track error
 epsi - yaw error
+```
 
 #### Actuators
 
